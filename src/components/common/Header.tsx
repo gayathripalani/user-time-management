@@ -24,7 +24,7 @@ const Header: FC = () => {
       if (authUser) {
         const { uid, email, displayName } = authUser;
         dispatch(addUser({ uid, email, displayName }));
-        navigate('/browse');
+        navigate('/home');
       } else {
         dispatch(removeUser());
         navigate('/');

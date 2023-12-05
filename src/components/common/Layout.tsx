@@ -12,7 +12,9 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     <>
       <Header />
         <Navbar />
-        <main>{children}</main>
+        <main>
+          <div className="w-[1/2]">{children}</div>
+        </main>
       <Footer />
     </>
   );

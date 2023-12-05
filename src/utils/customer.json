@@ -1,0 +1,41 @@
+{
+    "customers": [
+      {
+        "id": 1,
+        "name": "Posten Norge AS",
+        "projects": [
+          {
+            "id": 101,
+            "name": "Reports"
+          },
+          {
+            "id": 102,
+            "name": "Tracking"
+          },
+          {
+            "id": 103,
+            "name": "Private Marketing"
+          },
+          {
+            "id": 104,
+            "name": "Booking"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Telia",
+        "projects": [
+          {
+            "id": 201,
+            "name": "OneCall"
+          },
+          {
+            "id": 202,
+            "name": "Mycall"
+          }
+        ]
+      }
+    ]
+  }
+  
