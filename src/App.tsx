@@ -1,12 +1,19 @@
-function App() {
+import { BrowserRouter, Route, Routes, redirect } from 'react-router-dom'
+import Layout from './components/common/Layout'
+import Login from './components/Login'
+import TimeSheet from './components/TimeSheet'
 
+const App = () => {
   return (
-    <main className='App'>
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-    </main>
+    <BrowserRouter>
+      <Layout>
+          <Routes >
+            <Route path="/" element={<Login />} />
+            <Route path="/timesheet" element={<TimeSheet />} />
+          </Routes>
+      </Layout>
+    </BrowserRouter>
   )
 }
 
-export default App
+export default App;
