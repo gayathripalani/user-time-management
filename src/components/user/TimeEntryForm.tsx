@@ -1,97 +1,96 @@
+// TimeEntryForm.tsx
 import { FC, useState } from 'react';
-import customerData from '../../utils/customer.json';
-import { useForm } from 'react-hook-form';
-import { addEntry } from '../../utils/timeSheetEntrySlice';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
+import { addEntry, setTaskCount } from '../../utils/timeSheetEntrySlice';
+import AddTimeSheet from './AddTimeSheet';
+import { TimeSheetEntry, TimeEntry } from '../../utils/type';
 
 type FormValues = {
-  description: string;
-  customer: string;
-  project: string;
-  date: string;
-  hours: string;
-  comment: string;
+  timeEntries: TimeEntry[];
 };
 
 const TimeEntryForm: FC = () => {
   const dispatch = useDispatch();
+  const [taskCount, setTaskCountLocal] = useState(0);
   const {
     formState: { errors, isValid },
     register,
     handleSubmit,
     setValue,
-  } = useForm<FormValues>();
+    getValues,
+  } = useForm<FormValues>({
+    defaultValues: {
+      timeEntries: [
+        {
+          description: 'Tracking',
+          customer: 'Posten Norge AS',
+          project: 'Tracking',
+          hours: '4',
+          comment: 'Worked on Tracking',
+          date: '2023-12-07',
+        },
+      ],
+    },
+  });
 
-  const [projects, setProjects] = useState<string[]>([]);
-
-  const handleCustomerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedCustomer = customerData?.customers.find(
-      (customer) => customer.name === event.target.value
-    );
-    setProjects(selectedCustomer?.projects.map((project) => project.name) || []);
-  };
-
-  const onSubmit = async (data) => {
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      dispatch(addEntry(data));
+      dispatch(addEntry(data.timeEntries));
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue('date', e.target.value, { shouldValidate: true });
+  const handleDateChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(`timeEntries[${index}].date`, e.target.value, { shouldValidate: true });
   };
 
-  const handleInputChange = (field: keyof FormValues) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(field, e.target.value);
+  const handleInputChange = (field: keyof TimeEntry, index: number) => (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue(`timeEntries[${index}].${field}`, e.target.value);
+  };
+
+  const handleAddTaskClick = () => {
+    const currentEntries = getValues().timeEntries || [];
+    dispatch(setTaskCount(taskCount + 1)); // Corrected
+    setTaskCountLocal(taskCount + 1);
+    setValue('timeEntries', [...currentEntries, {}]);
   };
 
   return (
-    <form className="mt-20 px-10 flex flex-row justify-between" onSubmit={handleSubmit(onSubmit)}>
-      <input
-        className="p-4 my-2 bg-gray-100"
-        placeholder="Description"
-        type="text"
-        {...register('description')}
-        onChange={handleInputChange('description')}
-      />
-      <select className="p-4 my-2 bg-gray-100" {...register('customer')} onChange={handleCustomerChange}>
-        {customerData?.customers.map((customer, index) => (
-          <option key={index} value={customer.name}>
-            {customer.name}
-          </option>
-        ))}
-      </select>
-      <select className="p-4 my-2 bg-gray-100" {...register('project')}>
-        {projects.map((project, index) => (
-          <option key={index} value={project}>
-            {project}
-          </option>
-        ))}
-      </select>
-      <input
-        className="p-4 my-2 bg-gray-100"
-        type="date"
-        placeholder="Date"
-        {...register('date')}
-        onChange={handleDateChange}
-      />
-      <input
-        className="p-4 my-2 bg-gray-100"
-        type="text"
-        placeholder="Hours"
-        {...register('hours')}
-        onChange={handleInputChange('hours')}
-      />
-      <input
-        className="p-4 my-2 bg-gray-100"
-        type="text"
-        placeholder="Comment"
-        {...register('comment')}
-        onChange={handleInputChange('comment')}
-      />
-      <button className="p-2 my-4 bg-black rounded-lg text-white" type="submit" disabled={!isValid}>
+    <form className="mt-20 px-10" onSubmit={handleSubmit(onSubmit)}>
+      {getValues().timeEntries.map((entry, index) => (
+        <div key={index} className="flex flex-row justify-between mb-4">
+          <input
+            className="p-4 bg-gray-100"
+            type="date"
+            placeholder="Date"
+            {...register(`timeEntries[${index}].date`, { required: true })}
+            onChange={handleDateChange(index)}
+          />
+          <AddTimeSheet
+            register={(name, options) => register(`timeEntries[${index}].${name}`, options)}
+            handleInputChange={(field) => handleInputChange(field as keyof TimeEntry, index)}
+            index={index}
+          />
+        </div>
+      ))}
+
+      <button
+        className="p-2 my-4 bg-black rounded-lg text-white"
+        onClick={handleAddTaskClick}
+        type="button"
+      >
+        Add task
+      </button>
+
+      <button
+        className="p-2 my-4 bg-black rounded-lg text-white"
+        type="submit"
+        disabled={!isValid}
+      >
         Save
       </button>
     </form>

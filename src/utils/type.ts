@@ -13,3 +13,8 @@ export interface TimeEntry {
     comment?: string | null;
 }
 
+export interface TimeSheetEntry {
+    uid: number;
+    date: Date;
+    timeEntries: TimeEntry[];
+}
