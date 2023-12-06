@@ -24,7 +24,9 @@ const Header: FC = () => {
       if (authUser) {
         const { uid, email, displayName } = authUser;
         dispatch(addUser({ uid, email, displayName }));
-        navigate('/home');
+        if (location.pathname === '/') {
+          navigate('/home');
+        }
       } else {
         dispatch(removeUser());
         navigate('/');

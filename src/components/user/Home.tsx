@@ -1,0 +1,64 @@
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { RootState } from '../../utils/type';
+
+const Home = () => {
+  const { timeSheetEntries } = useSelector((state: RootState) => state.timesheet);
+  const navigate = useNavigate();
+  const [selectedDate, setSelectedDate] = useState('');
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedDate(e.target.value);
+  };
+
+  const handleDateClick = () => {
+    navigate(`/add-timesheet/${selectedDate}`);
+  };
+
+  return (
+    <div className="container mx-auto p-4">
+      <h2 className="text-2xl font-bold mb-4">Time Sheets for all dates</h2>
+      <input
+        className="p-4 bg-gray-100"
+        type="date"
+        placeholder="Date"
+        onChange={handleDateChange}
+        value={selectedDate}
+      />
+      <button
+        className="m-2 p-4 bg-black text-white rounded"
+        onClick={handleDateClick}
+      >
+        Add Tasks
+      </button>
+      {timeSheetEntries?.map((entry, index) => (
+        <div key={index} className="mb-6">
+          <h3 className="text-xl font-semibold mb-2">{entry.date}</h3>
+          <table className="w-full border-collapse border border-gray-300">
+            <thead>
+              <tr>
+                <th className="border border-gray-300 p-2">Description</th>
+                <th className="border border-gray-300 p-2">Customer</th>
+                <th className="border border-gray-300 p-2">Project</th>
+                <th className="border border-gray-300 p-2">Hours</th>
+              </tr>
+            </thead>
+            <tbody>
+              {entry.timeEntries?.map((timeEntry, timeIndex) => (
+                <tr key={timeIndex}>
+                  <td className="border border-gray-300 p-2">{timeEntry.description}</td>
+                  <td className="border border-gray-300 p-2">{timeEntry.customer}</td>
+                  <td className="border border-gray-300 p-2">{timeEntry.project}</td>
+                  <td className="border border-gray-300 p-2">{timeEntry.hours}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default Home;

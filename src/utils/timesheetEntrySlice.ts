@@ -1,4 +1,3 @@
-// timeSheetEntrySlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TimeSheetEntry, TimeEntry } from './type';
 
@@ -12,12 +11,21 @@ const initialState: TimeSheetEntryState = {
   taskCount: 0,
 };
 
-const timeSheetEntrySlice = createSlice({
+const timesheetEntrySlice = createSlice({
   name: 'timeSheetEntry',
   initialState,
   reducers: {
-    addEntry: (state, action: PayloadAction<TimeEntry[]>) => {
-      state.timeSheetEntries = [...state.timeSheetEntries, { uid: state.taskCount + 1, date: new Date(), timeEntries: action.payload }];
+    addEntry: (state, action: PayloadAction<TimeSheetEntry>) => {
+      // Assuming that the payload is an array of TimeEntry
+      const { date, timeEntries} = action.payload;
+      state.timeSheetEntries = [
+        ...state.timeSheetEntries,
+        {
+          uid: state.taskCount + 1,
+          date: date, // You may want to get the date from your payload if it's available
+          timeEntries: timeEntries
+        },
+      ];
       state.taskCount += 1;
     },
     setTaskCount: (state, action: PayloadAction<number>) => {
@@ -26,5 +34,5 @@ const timeSheetEntrySlice = createSlice({
   },
 });
 
-export const { addEntry, setTaskCount } = timeSheetEntrySlice.actions;
-export default timeSheetEntrySlice.reducer;
+export const { addEntry, setTaskCount } = timesheetEntrySlice.actions;
+export default timesheetEntrySlice.reducer;

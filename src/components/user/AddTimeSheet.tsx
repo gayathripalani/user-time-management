@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import customerData from '../../utils/customer.json';
+interface AddTimeSheetProps {
+  register: any;
+  handleInputChange: (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
-const AddTimeSheet = ({ register, handleInputChange }) => {
+const AddTimeSheet: React.FC<AddTimeSheetProps>  = ({ register, handleInputChange }) => {
   const [projects, setProjects] = useState<string[]>(['Reports']);
 
   const handleCustomerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
