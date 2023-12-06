@@ -5,12 +5,13 @@ interface FormFieldProps {
   label: string;
   type: string;
   register: any;
+  registerConfig: any;
   errors: any;
   handleInputChange: (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
 }
 
-const FormField: React.FC<FormFieldProps> = ({ name, label, type, register, errors, handleInputChange, placeholder }) => {
+const FormField: React.FC<FormFieldProps> = ({ name, label, type, register, registerConfig, errors, handleInputChange, placeholder }) => {
   const [inputValue, setInputValue] = useState('');
 
   return (
@@ -22,7 +23,7 @@ const FormField: React.FC<FormFieldProps> = ({ name, label, type, register, erro
         className={`p-4 my-2 bg-gray-100 ${errors && errors[name] ? 'border-1 border-red-500' : ''}`}
         type={type}
         placeholder={placeholder}
-        {...register(name, { required: `Fill the ${label.toLowerCase()}` })}
+        {...register(name, registerConfig)} 
         value={inputValue}
         onChange={(e) => {
           setInputValue(e.target.value);

@@ -24,15 +24,15 @@
       },
       {
         "id": 2,
-        "name": "Telia",
+        "name": "Telia Norge AS",
         "projects": [
           {
             "id": 201,
-            "name": "OneCall"
+            "name": "OneCall General"
           },
           {
             "id": 202,
-            "name": "Mycall"
+            "name": "Mycall General"
           }
         ]
       }

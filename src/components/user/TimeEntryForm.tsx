@@ -6,11 +6,13 @@ import AddTimeSheet from './AddTimeSheet';
 import { TimeSheetEntry, TimeEntry, RootState } from '../../utils/type';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getTotalHoursFilled } from '../../utils/helper';
+import Alert from '../common/Alert';
 
 const TimeEntryForm: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [taskCount, setTaskCountLocal] = useState(0);
+  const [totalHoursMessage, setTotalHoursMessage] = useState<string | null>(null);
   const { taskDate } = useParams();
 
   const {
@@ -20,6 +22,7 @@ const TimeEntryForm: FC = () => {
     setValue,
     getValues,
     trigger,
+    clearErrors
   } = useForm<TimeSheetEntry>({
     defaultValues: {
       uid: 1,
@@ -34,11 +37,20 @@ const TimeEntryForm: FC = () => {
 
   const onSubmit: SubmitHandler<TimeSheetEntry> = async (data) => {
     const totalHours = getTotalHoursFilled(data.timeEntries);
-    try {
-      dispatch(addEntry(data));
-      navigate('/home');
-    } catch (error) {
-      console.error(error);
+    if (totalHours === 8) {
+        try {
+          dispatch(addEntry(data));
+          navigate('/home');
+        } catch (error) {
+          console.error(error);
+        }
+    } else {
+        setTotalHoursMessage('Total hours must be greater than 8');
+        setValue('totalHours', { type: 'manual', message: 'Total hours must be greater than 8' });
+        setTimeout(() => {
+          clearErrors('totalHours');
+          setTotalHoursMessage('');
+        }, 3000);
     }
   };
 
@@ -57,43 +69,52 @@ const TimeEntryForm: FC = () => {
   };
 
   return (
-    <form className="mt-20 px-10" onSubmit={handleSubmit(onSubmit)}>
-      {getValues()?.timeEntries.map((entry, index) => (
-        <div key={index} className="flex flex-row justify-between mb-4">
-          <input
-            className="p-4 bg-gray-100 mb-4"
-            type="date"
-            placeholder="Date"
-            {...register(`timeEntries[${index}].date`, { required: true })}
-            value={taskDate}
-            disabled
-          />
-          <AddTimeSheet
-            register={(name, options) => register(`timeEntries[${index}].${name}`, options)}
-            handleInputChange={(field) => handleInputChange(field as keyof TimeEntry, index)}
-            errors={errors?.timeEntries && errors.timeEntries[index]}
-          />
-        </div>
-      ))}
+    <div>{totalHoursMessage && <Alert message={totalHoursMessage} />}
+      <form className="mt-20 px-10" onSubmit={handleSubmit(onSubmit)}>
+        {getValues()?.timeEntries.map((entry, index) => (
+          <div key={index} className="flex flex-row justify-between px-2 mb-4">
+            <div className="flex flex-col">
+              <label htmlFor="date" className="text-sm font-semibold mb-1">
+                Date
+              </label>
+              <input
+                className="p-4 bg-gray-100 mb-4"
+                type="date"
+                placeholder="Date"
+                {...register(`timeEntries[${index}].date`, { required: true })}
+                value={taskDate}
+                disabled
+              />
+            </div>
+            <AddTimeSheet
+              register={(name, options) => register(`timeEntries[${index}].${name}`, options)}
+              handleInputChange={(field) => handleInputChange(field as keyof TimeEntry, index)}
+              errors={errors?.timeEntries && errors.timeEntries[index]}
+            />
+          </div>
+        ))}
 
-      <button
-        className="p-2 my-4 bg-black rounded-lg text-white"
-        onClick={handleAddTaskClick}
-        type="button"
-      >
-        Add task
-      </button>
-
-      <div className="flex justify-center">
         <button
-          className="py-2 px-4 my-4 bg-black rounded-lg text-white"
-          type="submit"
+          className="p-2 my-4 bg-black rounded-lg text-white"
+          onClick={handleAddTaskClick}
+          type="button"
         >
-          Save
+          Add task
         </button>
-      </div>
-    </form>
+
+        <div className="flex justify-center">
+          <button
+            className={`py-2 px-4 my-4 bg-black rounded-lg text-white`}
+            type="submit"
+          >
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
 export default TimeEntryForm;
+
+

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TimeSheetEntry, TimeEntry } from './type';
+import { writeTimeSheetEntryToCache } from '../utils/storage/task-entries';
 
 interface TimeSheetEntryState {
   timeSheetEntries: TimeSheetEntry[];
@@ -27,6 +28,7 @@ const timesheetEntrySlice = createSlice({
         },
       ];
       state.taskCount += 1;
+      writeTimeSheetEntryToCache(state.timeSheetEntries);
     },
     addNoOfTasks: (state, action: PayloadAction<number>) => {
       state.taskCount = action.payload;

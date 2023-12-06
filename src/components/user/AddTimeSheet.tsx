@@ -26,6 +26,9 @@ const AddTimeSheet: React.FC<AddTimeSheetProps> = ({ register, errors, handleInp
         label="Description"
         type="text"
         register={register}
+        registerConfig={{
+          required: 'Fill the description',
+        }}
         errors={errors}
         handleInputChange={handleInputChange}
         placeholder="Enter description"
@@ -79,12 +82,19 @@ const AddTimeSheet: React.FC<AddTimeSheetProps> = ({ register, errors, handleInp
         label="Hours"
         type="text"
         register={register}
+        registerConfig={{
+          required: 'Fill the hours',
+          pattern: {
+            value: /^[0-9]$/,
+            message: 'Please enter a valid hours',
+          },
+        }}
         errors={errors}
         handleInputChange={handleInputChange}
         placeholder="Enter hours"
       />
 
-      <FormField
+      {/* <FormField
         name="comment"
         label="Comment"
         type="text"
@@ -92,7 +102,7 @@ const AddTimeSheet: React.FC<AddTimeSheetProps> = ({ register, errors, handleInp
         errors={errors}
         handleInputChange={handleInputChange}
         placeholder="Enter comment"
-      />
+      /> */}
     </>
   );
 };
