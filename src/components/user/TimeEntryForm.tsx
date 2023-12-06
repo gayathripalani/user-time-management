@@ -1,16 +1,17 @@
 import { FC, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { addEntry, setTaskCount } from '../../utils/timesheetEntrySlice';
+import { addEntry, addNoOfTasks } from '../../utils/timesheetEntrySlice';
 import AddTimeSheet from './AddTimeSheet';
 import { TimeSheetEntry, TimeEntry, RootState } from '../../utils/type';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getTotalHoursFilled } from '../../utils/helper';
 
 const TimeEntryForm: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [taskCount, setTaskCountLocal] = useState(0);
-  const {taskDate} = useParams();
+  const { taskDate } = useParams();
 
   const {
     formState: { errors, isValid },
@@ -18,17 +19,13 @@ const TimeEntryForm: FC = () => {
     handleSubmit,
     setValue,
     getValues,
+    trigger,
   } = useForm<TimeSheetEntry>({
     defaultValues: {
       uid: 1,
       date: taskDate,
       timeEntries: [
         {
-          description: 'Tracking',
-          customer: 'Posten Norge AS',
-          project: 'Tracking',
-          hours: '4',
-          comment: 'Worked on Tracking',
           date: taskDate,
         },
       ],
@@ -36,7 +33,7 @@ const TimeEntryForm: FC = () => {
   });
 
   const onSubmit: SubmitHandler<TimeSheetEntry> = async (data) => {
-    console.log(data);
+    const totalHours = getTotalHoursFilled(data.timeEntries);
     try {
       dispatch(addEntry(data));
       navigate('/home');
@@ -45,16 +42,16 @@ const TimeEntryForm: FC = () => {
     }
   };
 
-
   const handleInputChange = (field: keyof TimeEntry, index: number) => (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setValue(`timeEntries[${index}].${field}`, e.target.value);
+    trigger(`timeEntries[${index}].${field}`)
   };
 
   const handleAddTaskClick = () => {
     const currentEntries = getValues().timeEntries || [];
-    dispatch(setTaskCount(taskCount + 1));
+    dispatch(addNoOfTasks(taskCount + 1));
     setTaskCountLocal(taskCount + 1);
     setValue('timeEntries', [...currentEntries, {}]);
   };
@@ -63,18 +60,18 @@ const TimeEntryForm: FC = () => {
     <form className="mt-20 px-10" onSubmit={handleSubmit(onSubmit)}>
       {getValues()?.timeEntries.map((entry, index) => (
         <div key={index} className="flex flex-row justify-between mb-4">
-           <input
+          <input
             className="p-4 bg-gray-100 mb-4"
             type="date"
             placeholder="Date"
-            {...register('date', { required: true })}
+            {...register(`timeEntries[${index}].date`, { required: true })}
             value={taskDate}
             disabled
           />
           <AddTimeSheet
             register={(name, options) => register(`timeEntries[${index}].${name}`, options)}
             handleInputChange={(field) => handleInputChange(field as keyof TimeEntry, index)}
-            index={index}
+            errors={errors?.timeEntries && errors.timeEntries[index]}
           />
         </div>
       ))}

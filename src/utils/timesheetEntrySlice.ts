@@ -28,11 +28,11 @@ const timesheetEntrySlice = createSlice({
       ];
       state.taskCount += 1;
     },
-    setTaskCount: (state, action: PayloadAction<number>) => {
+    addNoOfTasks: (state, action: PayloadAction<number>) => {
       state.taskCount = action.payload;
     },
   },
 });
 
-export const { addEntry, setTaskCount } = timesheetEntrySlice.actions;
+export const { addEntry, addNoOfTasks } = timesheetEntrySlice.actions;
 export default timesheetEntrySlice.reducer;

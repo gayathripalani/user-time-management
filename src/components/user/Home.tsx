@@ -1,12 +1,12 @@
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../utils/type';
+import useCurrentWeek from '../../hooks/useCurrentWeek';
 
 const Home = () => {
   const { timeSheetEntries } = useSelector((state: RootState) => state.timesheet);
   const navigate = useNavigate();
-  const [selectedDate, setSelectedDate] = useState('');
+  const { minDate, maxDate, selectedDate, setSelectedDate } = useCurrentWeek();
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedDate(e.target.value);
@@ -25,6 +25,8 @@ const Home = () => {
         placeholder="Date"
         onChange={handleDateChange}
         value={selectedDate}
+        min={minDate}
+        max={maxDate}
       />
       <button
         className="m-2 p-4 bg-black text-white rounded"

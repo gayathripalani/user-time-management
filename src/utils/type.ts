@@ -15,7 +15,7 @@ export interface TimeEntry {
 
 export interface TimeSheetEntry {
     uid: number;
-    date: Date;
+    date: string;
     timeEntries: TimeEntry[];
 }
 
