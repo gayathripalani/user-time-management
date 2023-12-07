@@ -1,8 +1,7 @@
-import React, { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useForm, SubmitHandler, useFieldArray, FormProvider, useFormContext } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { addEntry, addNoOfTasks } from '../../utils/timesheetEntrySlice';
-import AddTimeSheet from './AddTimeSheet';
 import { TimeSheetEntry, TimeEntry, RootState } from '../../utils/type';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getTotalHoursFilled } from '../../utils/helper';
@@ -30,7 +29,9 @@ const TimeEntryForm: FC = () => {
     timeEntries: [defaultTimeEntry]
   };
   const filteredEntry: TimeSheetEntry  = timeSheetEntries?.find(entry => entry.date === new Date(taskDate || '')) || defaultEntry;
-  const formMethods = useForm<TimeSheetEntry>({defaultValues:filteredEntry});  
+  const formMethods = useForm<TimeSheetEntry>({defaultValues:filteredEntry});
+  const initialProjects: string[] = ['Reports', 'Tracking', 'Booking', 'Private Marketing'];
+  const [projectStates, setProjectStates] = useState<Record<number, string[]>>({});
 
   const { control, handleSubmit, setValue, getValues, clearErrors, register, formState: { errors, isValid }, } = formMethods;
 
@@ -39,12 +40,26 @@ const TimeEntryForm: FC = () => {
     name: 'timeEntries',
   });
 
-  const handleCustomerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedCustomer = customerData?.customers.find(
-      (customer) => customer.name === event.target.value
-    );
+  useEffect(() => {
+    const initialStates: Record<number, string[]> = {};
+    fields.forEach((_, index) => {
+      initialStates[index] = initialProjects;
+    });
+    setProjectStates(initialStates);
+  }, [fields]);
+
+  const handleCustomerChange = (index: number) => (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCustomer = customerData?.customers.find((customer) => customer.name === event.target.value);
     const defaultProjects = selectedCustomer?.projects.map((project) => project.name) || [];
-    setProjects(defaultProjects);
+
+    setProjectStates((prevStates) => {
+      const newStates = { ...prevStates };
+      newStates[index] = defaultProjects;
+      return newStates;
+    });
+
+    setValue(`timeEntries.${index}.customer`, event.target.value);
+    setValue(`timeEntries.${index}.project`, defaultProjects[0]);
   };
 
   const onSubmit: SubmitHandler<TimeSheetEntry> = async (data) => {
@@ -105,12 +120,12 @@ const TimeEntryForm: FC = () => {
 
                 <div className="flex flex-col">
                   <label htmlFor={`timeEntries.${index}.customer`} className="text-sm font-semibold mb-1">
-                    customer
+                    Customer
                   </label>
                   <select
                     className="p-4 mb-4 bg-gray-100"
                     {...register(`timeEntries.${index}.customer`)}
-                    onChange={handleCustomerChange}
+                    onChange={handleCustomerChange(index)}
                   >
                     {customerData?.customers.map((customer, index) => (
                       <option key={index} value={customer.name}>
@@ -122,13 +137,13 @@ const TimeEntryForm: FC = () => {
 
                 <div className="flex flex-col">
                   <label htmlFor={`timeEntries.${index}.project`} className="text-sm font-semibold mb-1">
-                    project
+                    Project
                   </label>
                   <select
                     className="p-4 mb-4 bg-gray-100"
                     {...register(`timeEntries.${index}.project`)}
                   >
-                    {projects.map((project, index) => (
+                    {projectStates[index]?.map((project, index) => (
                       <option key={index} value={project}>
                         {project}
                       </option>
