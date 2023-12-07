@@ -154,7 +154,8 @@ const TimeEntryForm: FC = () => {
                       
                   />
                 </div>
-                <button type="button" onClick={() => remove(index)}>
+
+                <button type="button" className="p-2 my-4 rounded-lg bg-transparent py-2 px-4 border border-red-500" onClick={() => remove(index)}>
                   Remove Task
                 </button>
               </div>
