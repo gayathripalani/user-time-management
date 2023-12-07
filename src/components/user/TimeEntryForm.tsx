@@ -70,7 +70,8 @@ const TimeEntryForm: FC = () => {
   };
 
   return (
-    <div>{totalHoursMessage && <Alert message={totalHoursMessage} />}
+    <div className="container p-4 mx-auto">
+      {totalHoursMessage && <Alert message={totalHoursMessage} />}
       <FormProvider {...formMethods}>
         <div>
           <form className="mt-20 px-10" onSubmit={handleSubmit(onSubmit)}>
@@ -107,7 +108,7 @@ const TimeEntryForm: FC = () => {
                     customer
                   </label>
                   <select
-                    className="p-4 my-2 bg-gray-100"
+                    className="p-4 mb-4 bg-gray-100"
                     {...register(`timeEntries.${index}.customer`)}
                     onChange={handleCustomerChange}
                   >
@@ -124,7 +125,7 @@ const TimeEntryForm: FC = () => {
                     project
                   </label>
                   <select
-                    className="p-4 my-2 bg-gray-100"
+                    className="p-4 mb-4 bg-gray-100"
                     {...register(`timeEntries.${index}.project`)}
                   >
                     {projects.map((project, index) => (
