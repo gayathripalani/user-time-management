@@ -8,14 +8,14 @@ export interface TimeEntry {
     description: string;
     customer: string;
     project: string;
-    date: string;
+    date: Date;
     hours: number;
     comment?: string | null;
 }
 
 export interface TimeSheetEntry {
     uid: number;
-    date: string;
+    date: Date;
     timeEntries: TimeEntry[];
 }
 

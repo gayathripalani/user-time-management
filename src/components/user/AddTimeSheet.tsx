@@ -1,14 +1,12 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import customerData from '../../utils/customer.json';
 import FormField from '../common/FormField';
 
-interface AddTimeSheetProps {
-  register: any;
-  errors: any;
-  handleInputChange: (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
+interface AddTimeSheetProps {}
 
-const AddTimeSheet: React.FC<AddTimeSheetProps> = ({ register, errors, handleInputChange }) => {
+const AddTimeSheet: React.FC<AddTimeSheetProps> = () => {
+  const { register, setValue, getValues, formState: { errors }, defaultValue  } = useFormContext();
   const [projects, setProjects] = useState<string[]>(['Reports', 'Tracking', 'Booking', 'Private Marketing']);
 
   const handleCustomerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -30,7 +28,7 @@ const AddTimeSheet: React.FC<AddTimeSheetProps> = ({ register, errors, handleInp
           required: 'Fill the description',
         }}
         errors={errors}
-        handleInputChange={handleInputChange}
+        handleInputChange={(field) => (e) => setValue(`timeEntries[0].${field}`, e.target.value)}
         placeholder="Enter description"
       />
 
@@ -49,7 +47,7 @@ const AddTimeSheet: React.FC<AddTimeSheetProps> = ({ register, errors, handleInp
             </option>
           ))}
         </select>
-        {errors && errors.customer && (
+        {errors?.customer && (
           <div className="text-red-500 text-sm">
             {errors.customer.message}
           </div>
@@ -70,7 +68,7 @@ const AddTimeSheet: React.FC<AddTimeSheetProps> = ({ register, errors, handleInp
             </option>
           ))}
         </select>
-        {errors && errors.project && (
+        {errors?.project && (
           <div className="text-red-500 text-sm">
             {errors.project.message}
           </div>
@@ -90,19 +88,9 @@ const AddTimeSheet: React.FC<AddTimeSheetProps> = ({ register, errors, handleInp
           },
         }}
         errors={errors}
-        handleInputChange={handleInputChange}
+        handleInputChange={(field) => (e) => setValue(`timeEntries[0].${field}`, e.target.value)}
         placeholder="Enter hours"
       />
-
-      {/* <FormField
-        name="comment"
-        label="Comment"
-        type="text"
-        register={register}
-        errors={errors}
-        handleInputChange={handleInputChange}
-        placeholder="Enter comment"
-      /> */}
     </>
   );
 };
