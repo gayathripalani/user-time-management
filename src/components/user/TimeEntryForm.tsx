@@ -7,13 +7,11 @@ import { TimeSheetEntry, TimeEntry, RootState } from '../../utils/type';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getTotalHoursFilled } from '../../utils/helper';
 import Alert from '../common/Alert';
-import customerData from '../../utils/customer.json';
 
 const TimeEntryForm: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { taskDate } = useParams();
-  const [projects, setProjects] = useState<string[]>(['Reports', 'Tracking', 'Booking', 'Private Marketing']);
   const [totalHoursMessage, setTotalHoursMessage] = useState<string | null>(null);
   const { timeSheetEntries } = useSelector((state: RootState) => state.timesheet);
   const defaultTimeEntry: TimeEntry = {
@@ -39,13 +37,6 @@ const TimeEntryForm: FC = () => {
     name: 'timeEntries',
   });
 
-  const handleCustomerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedCustomer = customerData?.customers.find(
-      (customer) => customer.name === event.target.value
-    );
-    const defaultProjects = selectedCustomer?.projects.map((project) => project.name) || [];
-    setProjects(defaultProjects);
-  };
 
   const onSubmit: SubmitHandler<TimeSheetEntry> = async (data) => {
     const totalHours = getTotalHoursFilled(data.timeEntries);
@@ -103,38 +94,8 @@ const TimeEntryForm: FC = () => {
                     defaultValue={entry.description} />
                 </div>
 
-                <div className="flex flex-col">
-                  <label htmlFor={`timeEntries.${index}.customer`} className="text-sm font-semibold mb-1">
-                    customer
-                  </label>
-                  <select
-                    className="p-4 mb-4 bg-gray-100"
-                    {...register(`timeEntries.${index}.customer`)}
-                    onChange={handleCustomerChange}
-                  >
-                    {customerData?.customers.map((customer, index) => (
-                      <option key={index} value={customer.name}>
-                        {customer.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <AddTimeSheet entry={entry} index={index}/>
 
-                <div className="flex flex-col">
-                  <label htmlFor={`timeEntries.${index}.project`} className="text-sm font-semibold mb-1">
-                    project
-                  </label>
-                  <select
-                    className="p-4 mb-4 bg-gray-100"
-                    {...register(`timeEntries.${index}.project`)}
-                  >
-                    {projects.map((project, index) => (
-                      <option key={index} value={project}>
-                        {project}
-                      </option>
-                    ))}
-                  </select>
-                </div>
 
                 <div className="flex flex-col">
                     <label htmlFor={`timeEntries[${index}].hours`} className="text-sm font-semibold mb-1">

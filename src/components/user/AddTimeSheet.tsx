@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import customerData from '../../utils/customer.json';
-import FormField from '../common/FormField';
+import { useFormContext } from 'react-hook-form';
 
-interface AddTimeSheetProps {}
+interface AddTimeSheetProps {
+   entry: any,
+    index: number
+}
 
-const AddTimeSheet: React.FC<AddTimeSheetProps> = () => {
-  const { register, setValue, getValues, formState: { errors }, defaultValue  } = useFormContext();
+const AddTimeSheet: React.FC<AddTimeSheetProps> = ({entry, index}) => {
+  const { register, setValue, getValues, formState: { errors }  } = useFormContext();
   const [projects, setProjects] = useState<string[]>(['Reports', 'Tracking', 'Booking', 'Private Marketing']);
 
   const handleCustomerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -17,28 +19,16 @@ const AddTimeSheet: React.FC<AddTimeSheetProps> = () => {
     setProjects(defaultProjects);
   };
 
+
   return (
     <>
-      <FormField
-        name="description"
-        label="Description"
-        type="text"
-        register={register}
-        registerConfig={{
-          required: 'Fill the description',
-        }}
-        errors={errors}
-        handleInputChange={(field) => (e) => setValue(`timeEntries[0].${field}`, e.target.value)}
-        placeholder="Enter description"
-      />
-
       <div className="flex flex-col">
-        <label htmlFor="customer" className="text-sm font-semibold mb-1">
-          Customer
+        <label htmlFor={`timeEntries.${index}.customer`} className="text-sm font-semibold mb-1">
+          customer
         </label>
         <select
-          className="p-4 my-2 bg-gray-100"
-          {...register('customer', { defaultValue: customerData?.customers[0]?.name })}
+          className="p-4 mb-4 bg-gray-100"
+          {...register(`timeEntries.${index}.customer`)}
           onChange={handleCustomerChange}
         >
           {customerData?.customers.map((customer, index) => (
@@ -47,20 +37,15 @@ const AddTimeSheet: React.FC<AddTimeSheetProps> = () => {
             </option>
           ))}
         </select>
-        {errors?.customer && (
-          <div className="text-red-500 text-sm">
-            {errors.customer.message}
-          </div>
-        )}
       </div>
 
       <div className="flex flex-col">
-        <label htmlFor="project" className="text-sm font-semibold mb-1">
-          Project
+        <label htmlFor={`timeEntries.${index}.project`} className="text-sm font-semibold mb-1">
+          project
         </label>
         <select
-          className="p-4 my-2 bg-gray-100"
-          {...register('project', { defaultValue: projects[0] })}
+          className="p-4 mb-4 bg-gray-100"
+          {...register(`timeEntries.${index}.project`)}
         >
           {projects.map((project, index) => (
             <option key={index} value={project}>
@@ -68,31 +53,11 @@ const AddTimeSheet: React.FC<AddTimeSheetProps> = () => {
             </option>
           ))}
         </select>
-        {errors?.project && (
-          <div className="text-red-500 text-sm">
-            {errors.project.message}
-          </div>
-        )}
       </div>
-
-      <FormField
-        name="hours"
-        label="Hours"
-        type="text"
-        register={register}
-        registerConfig={{
-          required: 'Fill the hours',
-          pattern: {
-            value: /^[0-9]$/,
-            message: 'Please enter a valid hours',
-          },
-        }}
-        errors={errors}
-        handleInputChange={(field) => (e) => setValue(`timeEntries[0].${field}`, e.target.value)}
-        placeholder="Enter hours"
-      />
     </>
   );
 };
 
 export default AddTimeSheet;
+
+
