@@ -9,12 +9,11 @@ export interface TimeEntry {
     customer: string;
     project: string;
     date: Date;
-    hours: number;
+    hours: string;
     comment?: string | null;
 }
 
 export interface TimeSheetEntry {
-    uid: number;
     date: Date;
     timeEntries: TimeEntry[];
 }
@@ -22,6 +21,5 @@ export interface TimeSheetEntry {
 export interface RootState {
     timesheet: {
         timeSheetEntries: TimeSheetEntry[];
-        taskCount: number;
     };
 }

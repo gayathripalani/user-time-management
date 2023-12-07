@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { useForm, SubmitHandler, useFieldArray, FormProvider, useFormContext } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { addEntry, addNoOfTasks } from '../../utils/timesheetEntrySlice';
+import { addEntry } from '../../utils/timesheetEntrySlice';
 import { TimeSheetEntry, TimeEntry, RootState } from '../../utils/type';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getTotalHoursFilled } from '../../utils/helper';
@@ -12,14 +12,13 @@ const TimeEntryForm: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { taskDate } = useParams();
-  const [projects, setProjects] = useState<string[]>(['Reports', 'Tracking', 'Booking', 'Private Marketing']);
   const [totalHoursMessage, setTotalHoursMessage] = useState<string | null>(null);
   const { timeSheetEntries } = useSelector((state: RootState) => state.timesheet);
   const defaultTimeEntry: TimeEntry = {
     description: '',
-    customer: '',
-    project: '',
-    hours: 2,
+    customer: 'Posten Norge AS',
+    project: 'Tracking',
+    hours: '2',
     date : new Date(taskDate || '')
   }
   const defaultEntry =  
@@ -28,7 +27,14 @@ const TimeEntryForm: FC = () => {
     date: new Date(taskDate || ''),
     timeEntries: [defaultTimeEntry]
   };
-  const filteredEntry: TimeSheetEntry  = timeSheetEntries?.find(entry => entry.date === new Date(taskDate || '')) || defaultEntry;
+
+  const filteredEntry: TimeSheetEntry | null = timeSheetEntries?.find(entry => {
+    const taskDateValue = new Date(taskDate || '');
+    const entryDate = new Date(entry.date);
+  
+    return entryDate.getTime() === taskDateValue.getTime();
+  }) || defaultEntry;
+
   const formMethods = useForm<TimeSheetEntry>({defaultValues:filteredEntry});
   const initialProjects: string[] = ['Reports', 'Tracking', 'Booking', 'Private Marketing'];
   const [projectStates, setProjectStates] = useState<Record<number, string[]>>({});
@@ -72,7 +78,7 @@ const TimeEntryForm: FC = () => {
         console.error(error);
       }
     } else {
-      setTotalHoursMessage('Total hours must be greater than 8');
+      setTotalHoursMessage('Total hours must be 8');
       setTimeout(() => {
         setTotalHoursMessage('');
       }, 3000);
@@ -80,7 +86,6 @@ const TimeEntryForm: FC = () => {
   };
 
   const handleAddTaskClick = () => {
-    dispatch(addNoOfTasks(fields.length + 1));
     append(defaultTimeEntry);
   };
 
@@ -157,14 +162,10 @@ const TimeEntryForm: FC = () => {
                     </label>
                       <input
                       className="p-4 bg-gray-100 mb-4"
-                      type="text"
+                      type="number"
                       placeholder="hours"
                       {...register(`timeEntries.${index}.hours`, { 
-                        required: 'Fill the hours',
-                        pattern: {
-                          value: /^[0-9]$/,
-                          message: 'Please enter a valid hours',
-                        },})}
+                        required: 'Fill the hours'})}
                       defaultValue={entry.hours}
                       
                   />

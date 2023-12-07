@@ -1,15 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { TimeSheetEntry, TimeEntry } from './type';
+import { TimeSheetEntry } from './type';
 import { writeTimeSheetEntryToCache } from '../utils/storage/task-entries';
 
 interface TimeSheetEntryState {
   timeSheetEntries: TimeSheetEntry[];
-  taskCount: number;
 }
 
 const initialState: TimeSheetEntryState = {
   timeSheetEntries: [],
-  taskCount: 0,
 };
 
 const timesheetEntrySlice = createSlice({
@@ -17,24 +15,29 @@ const timesheetEntrySlice = createSlice({
   initialState,
   reducers: {
     addEntry: (state, action: PayloadAction<TimeSheetEntry>) => {
-      // Assuming that the payload is an array of TimeEntry
-      const { date, timeEntries} = action.payload;
-      state.timeSheetEntries = [
-        ...state.timeSheetEntries,
-        {
-          uid: state.taskCount + 1,
-          date: date, // You may want to get the date from your payload if it's available
-          timeEntries: timeEntries
-        },
-      ];
-      state.taskCount += 1;
+      const { date, timeEntries } = action.payload;
+      const existingEntryIndex = state.timeSheetEntries.findIndex(entry => {
+        return new Date(entry.date).getTime() === new Date(date).getTime();
+      });
+    
+      if (existingEntryIndex !== -1) {
+        const updatedEntry = {
+          ...state.timeSheetEntries[existingEntryIndex],
+          timeEntries
+        };
+        state.timeSheetEntries = [
+          ...state.timeSheetEntries.slice(0, existingEntryIndex),
+          updatedEntry,
+          ...state.timeSheetEntries.slice(existingEntryIndex + 1)
+        ];
+      } else {
+        state.timeSheetEntries.push({ date, timeEntries });
+      }
+    
       writeTimeSheetEntryToCache(state.timeSheetEntries);
-    },
-    addNoOfTasks: (state, action: PayloadAction<number>) => {
-      state.taskCount = action.payload;
-    },
+    }   
   },
 });
 
-export const { addEntry, addNoOfTasks } = timesheetEntrySlice.actions;
+export const { addEntry } = timesheetEntrySlice.actions;
 export default timesheetEntrySlice.reducer;

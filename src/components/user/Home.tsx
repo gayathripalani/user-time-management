@@ -36,7 +36,7 @@ const Home = () => {
       </button>
       {timeSheetEntries?.map((entry, index) => (
         <div key={index} className="mb-6">
-          <h3 className="text-xl font-semibold mb-2">{entry.date.toString()}</h3>
+          <h3 className="text-xl font-semibold mb-2">{new Date(entry.date).toDateString()}</h3>
           <table className="w-full border-collapse border border-gray-300">
             <thead>
               <tr>
