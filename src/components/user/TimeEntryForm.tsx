@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useForm, SubmitHandler, useFieldArray, FormProvider } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { addEntry } from '../../utils/timesheetEntrySlice';
@@ -43,6 +43,12 @@ const TimeEntryForm: FC = () => {
     control,
     name: 'timeEntries',
   });
+
+  useEffect(() => {
+    if (totalHoursMessage) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [totalHoursMessage]);
 
   const onSubmit: SubmitHandler<TimeSheetEntry> = async (data) => {
     const totalHours = getTotalHoursFilled(data.timeEntries);
