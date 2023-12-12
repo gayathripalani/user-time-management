@@ -1,12 +1,11 @@
 import { FC, useState } from 'react';
-import { useForm, SubmitHandler, useFieldArray, FormProvider, useFormContext } from 'react-hook-form';
+import { useForm, SubmitHandler, useFieldArray, FormProvider } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { addEntry } from '../../utils/timesheetEntrySlice';
 import { TimeSheetEntry, TimeEntry, RootState } from '../../utils/type';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getTotalHoursFilled } from '../../utils/helper';
 import Alert from '../common/Alert';
-import customerData from '../../utils/customer.json';
 import AddTimeSheet from './AddTimeSheet';
 
 const TimeEntryForm: FC = () => {
@@ -37,8 +36,6 @@ const TimeEntryForm: FC = () => {
   }) || defaultEntry;
 
   const formMethods = useForm<TimeSheetEntry>({defaultValues:filteredEntry});
-  const initialProjects: string[] = ['Reports', 'Tracking', 'Booking', 'Private Marketing'];
-  const [projectStates, setProjectStates] = useState<Record<number, string[]>>({});
 
   const { control, handleSubmit, setValue, getValues, clearErrors, register, formState: { errors, isValid }, } = formMethods;
 
@@ -81,15 +78,14 @@ const TimeEntryForm: FC = () => {
                     Date
                   </label>
                   <input
-                    className="p-4 bg-gray-100 mb-4"
-                    type="date"
-                    placeholder="Date"
-                    {...register(`timeEntries.${index}.date`, { required: true })}
-                    value={taskDate}
-                    disabled
+                      className="p-4 bg-gray-100 mb-4"
+                      type="date"
+                      placeholder="Date"
+                      defaultValue={taskDate}
+                      value={taskDate}
+                      disabled
                   />
                 </div>
-
                 <div className="flex flex-col">
                   <label htmlFor={`timeEntries[${index}].description`} className="text-sm font-semibold mb-1">
                     Description
