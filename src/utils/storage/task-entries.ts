@@ -12,5 +12,5 @@ export const readTimeSheetEntryFromCache = () => {
 };
 
 export const clearTimeSheetEntryFromCache = () => {
-	localStorage.removeItem(CURRENT_MEMBER_TIME_ENTRIES);
+	return localStorage.removeItem(CURRENT_MEMBER_TIME_ENTRIES);
 };

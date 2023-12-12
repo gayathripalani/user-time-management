@@ -35,7 +35,7 @@ const timesheetEntrySlice = createSlice({
       }
     
       writeTimeSheetEntryToCache(state.timeSheetEntries);
-    }   
+    }  
   },
 });
 
