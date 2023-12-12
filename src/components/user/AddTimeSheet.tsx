@@ -24,12 +24,12 @@ const AddTimeSheet: React.FC<AddTimeSheetProps> = ({entry, index}) => {
 
   return (
     <>
-      <div className="flex flex-col">
+      <div className="flex flex-col mb-4 md:mb-0 md:ml-4">
         <label htmlFor={`timeEntries.${index}.customer`} className="text-sm font-semibold mb-1">
           Customer
         </label>
         <select
-          className="p-4 mb-4 bg-gray-100"
+          className="p-4 bg-gray-100"
           {...register(`timeEntries.${index}.customer`)}
           onChange={handleCustomerChange}
         >
@@ -41,12 +41,12 @@ const AddTimeSheet: React.FC<AddTimeSheetProps> = ({entry, index}) => {
         </select>
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col mb-4 md:mb-0 md:ml-4">
         <label htmlFor={`timeEntries.${index}.project`} className="text-sm font-semibold mb-1">
           Project
         </label>
         <select
-          className="p-4 mb-4 bg-gray-100"
+          className="p-4 bg-gray-100"
           {...register(`timeEntries.${index}.project`)}
         >
           {projects.map((project, index) => (

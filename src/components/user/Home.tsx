@@ -19,7 +19,7 @@ const Home = () => {
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">Time Sheets for all dates</h2>
-      <div className="md:flex md:items-center md:space-x-4 mb-4">
+      <div className="xs:flex xs:items-center xs:space-x-8 mb-4">
         <input
           className="p-4 bg-gray-100"
           type="date"

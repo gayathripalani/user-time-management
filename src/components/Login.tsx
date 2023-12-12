@@ -57,7 +57,7 @@ const Login: FC = () => {
   };
 
   return (
-    <form onSubmit={(e) => e.preventDefault()} className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-8 md:p-12 bg-black my-36 mx-auto right-0 left-0 text-white rounded-lg bg-opacity-80">
+    <form onSubmit={(e) => e.preventDefault()} className="w-[90%] md:w-1/2 lg:w-1/3 xl:w-1/4 p-8 md:p-12 bg-black my-15 md:my-36 mx-auto right-0 left-0 text-white rounded-lg bg-opacity-80">
         <h1 className="font-bold text-3xl py-4">{isSignInForm ? 'Sign In' : 'Sign Up'}</h1>
         {!isSignInForm && <input ref={name} type="text" placeholder="Full Name" className="p-4 my-2 w-full bg-gray-500" />}
         <input ref={email} type="text" placeholder="Email Id" className="p-4 my-2 w-full bg-gray-500" />

@@ -19,25 +19,25 @@ const TimeEntryForm: FC = () => {
     customer: 'Posten Norge AS',
     project: 'Tracking',
     hours: '2',
-    date : new Date(taskDate || '')
-  }
-  const defaultEntry =  
-    {
-    uid:1,
     date: new Date(taskDate || ''),
-    timeEntries: [defaultTimeEntry]
+  };
+  const defaultEntry = {
+    uid: 1,
+    date: new Date(taskDate || ''),
+    timeEntries: [defaultTimeEntry],
   };
 
-  const filteredEntry: TimeSheetEntry | null = timeSheetEntries?.find(entry => {
-    const taskDateValue = new Date(taskDate || '');
-    const entryDate = new Date(entry.date);
-  
-    return entryDate.getTime() === taskDateValue.getTime();
-  }) || defaultEntry;
+  const filteredEntry: TimeSheetEntry | null =
+    timeSheetEntries?.find((entry) => {
+      const taskDateValue = new Date(taskDate || '');
+      const entryDate = new Date(entry.date);
 
-  const formMethods = useForm<TimeSheetEntry>({defaultValues:filteredEntry});
+      return entryDate.getTime() === taskDateValue.getTime();
+    }) || defaultEntry;
 
-  const { control, handleSubmit, setValue, getValues, clearErrors, register, formState: { errors, isValid }, } = formMethods;
+  const formMethods = useForm<TimeSheetEntry>({ defaultValues: filteredEntry });
+
+  const { control, handleSubmit, register, formState: { errors, isValid } } = formMethods;
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -70,52 +70,55 @@ const TimeEntryForm: FC = () => {
       {totalHoursMessage && <Alert message={totalHoursMessage} />}
       <FormProvider {...formMethods}>
         <div>
-          <form className="mt-20 px-10" onSubmit={handleSubmit(onSubmit)}>
+          <form className="mt-20 px-4 md:px-10 lg:px-20 xl:px-32 overflow-x-auto" onSubmit={handleSubmit(onSubmit)}>
             {fields.map((entry, index) => (
-              <div key={entry.id} className="flex flex-row justify-between px-2 mb-4">
-                <div className="flex flex-col">
+              <div key={entry.id} className="flex flex-col md:flex-row justify-between md:items-center px-2 mb-4">
+                <div className="flex flex-col mb-4 md:mb-0">
                   <label htmlFor={`timeEntries[${index}].date`} className="text-sm font-semibold mb-1">
                     Date
                   </label>
                   <input
-                      className="p-4 bg-gray-100 mb-4"
-                      type="date"
-                      placeholder="Date"
-                      defaultValue={taskDate}
-                      value={taskDate}
-                      disabled
+                    className="p-4 bg-gray-100"
+                    type="date"
+                    placeholder="Date"
+                    value={taskDate}
+                    disabled
                   />
                 </div>
-                <div className="flex flex-col">
+
+                <div className="flex flex-col mb-4 md:mb-0 md:ml-4">
                   <label htmlFor={`timeEntries[${index}].description`} className="text-sm font-semibold mb-1">
                     Description
                   </label>
                   <input
-                    className="p-4 bg-gray-100 mb-4"
+                    className="p-4 bg-gray-100"
                     type="text"
                     placeholder="Enter description"
                     {...register(`timeEntries.${index}.description`, { required: true })}
-                    defaultValue={entry.description} />
+                    defaultValue={entry.description}
+                  />
                 </div>
 
                 <AddTimeSheet entry={entry} index={index} />
 
-                <div className="flex flex-col">
-                    <label htmlFor={`timeEntries[${index}].hours`} className="text-sm font-semibold mb-1">
-                      Hours
-                    </label>
-                      <input
-                      className="p-4 bg-gray-100 mb-4"
-                      type="number"
-                      placeholder="hours"
-                      {...register(`timeEntries.${index}.hours`, { 
-                        required: 'Fill the hours'})}
-                      defaultValue={entry.hours}
-                      
+                <div className="flex flex-col mb-4 md:mb-0 md:mx-4">
+                  <label htmlFor={`timeEntries[${index}].hours`} className="text-sm font-semibold mb-1">
+                    Hours
+                  </label>
+                  <input
+                    className="p-4 bg-gray-100"
+                    type="number"
+                    placeholder="hours"
+                    {...register(`timeEntries.${index}.hours`, { required: 'Fill the hours' })}
+                    defaultValue={entry.hours}
                   />
                 </div>
 
-                <button type="button" className="p-2 my-4 rounded-lg bg-transparent py-2 px-4 border border-red-500" onClick={() => remove(index)}>
+                <button
+                  type="button"
+                  className="p-2 mt-4 rounded-lg bg-transparent py-2 px-4 border border-red-500"
+                  onClick={() => remove(index)}
+                >
                   Remove Task
                 </button>
               </div>
