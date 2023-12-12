@@ -11,6 +11,6 @@ export const readTimeSheetEntryFromCache = () => {
 	return JSON.parse(serialized);
 };
 
-export const clearCurrentMemberFromCache = () => {
+export const clearTimeSheetEntryFromCache = () => {
 	localStorage.removeItem(CURRENT_MEMBER_TIME_ENTRIES);
 };

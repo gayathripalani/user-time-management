@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import customerData from '../../utils/customer.json';
 import { useFormContext } from 'react-hook-form';
 
@@ -9,7 +9,9 @@ interface AddTimeSheetProps {
 
 const AddTimeSheet: React.FC<AddTimeSheetProps> = ({entry, index}) => {
   const { register, setValue, getValues, formState: { errors }  } = useFormContext();
-  const [projects, setProjects] = useState<string[]>(['Reports', 'Tracking', 'Booking', 'Private Marketing']);
+  const [projects, setProjects] = useState<string[]>(
+    customerData?.customers.find((customer) => customer.name === entry.customer)?.projects.map((project) => project.name) || []
+  );
 
   const handleCustomerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCustomer = customerData?.customers.find(
@@ -24,7 +26,7 @@ const AddTimeSheet: React.FC<AddTimeSheetProps> = ({entry, index}) => {
     <>
       <div className="flex flex-col">
         <label htmlFor={`timeEntries.${index}.customer`} className="text-sm font-semibold mb-1">
-          customer
+          Customer
         </label>
         <select
           className="p-4 mb-4 bg-gray-100"
@@ -41,7 +43,7 @@ const AddTimeSheet: React.FC<AddTimeSheetProps> = ({entry, index}) => {
 
       <div className="flex flex-col">
         <label htmlFor={`timeEntries.${index}.project`} className="text-sm font-semibold mb-1">
-          project
+          Project
         </label>
         <select
           className="p-4 mb-4 bg-gray-100"

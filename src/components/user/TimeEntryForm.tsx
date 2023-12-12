@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { useForm, SubmitHandler, useFieldArray, FormProvider, useFormContext } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { addEntry } from '../../utils/timesheetEntrySlice';
@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getTotalHoursFilled } from '../../utils/helper';
 import Alert from '../common/Alert';
 import customerData from '../../utils/customer.json';
+import AddTimeSheet from './AddTimeSheet';
 
 const TimeEntryForm: FC = () => {
   const dispatch = useDispatch();
@@ -45,28 +46,6 @@ const TimeEntryForm: FC = () => {
     control,
     name: 'timeEntries',
   });
-
-  useEffect(() => {
-    const initialStates: Record<number, string[]> = {};
-    fields.forEach((_, index) => {
-      initialStates[index] = initialProjects;
-    });
-    setProjectStates(initialStates);
-  }, [fields]);
-
-  const handleCustomerChange = (index: number) => (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedCustomer = customerData?.customers.find((customer) => customer.name === event.target.value);
-    const defaultProjects = selectedCustomer?.projects.map((project) => project.name) || [];
-
-    setProjectStates((prevStates) => {
-      const newStates = { ...prevStates };
-      newStates[index] = defaultProjects;
-      return newStates;
-    });
-
-    setValue(`timeEntries.${index}.customer`, event.target.value);
-    setValue(`timeEntries.${index}.project`, defaultProjects[0]);
-  };
 
   const onSubmit: SubmitHandler<TimeSheetEntry> = async (data) => {
     const totalHours = getTotalHoursFilled(data.timeEntries);
@@ -123,38 +102,7 @@ const TimeEntryForm: FC = () => {
                     defaultValue={entry.description} />
                 </div>
 
-                <div className="flex flex-col">
-                  <label htmlFor={`timeEntries.${index}.customer`} className="text-sm font-semibold mb-1">
-                    Customer
-                  </label>
-                  <select
-                    className="p-4 mb-4 bg-gray-100"
-                    {...register(`timeEntries.${index}.customer`)}
-                    onChange={handleCustomerChange(index)}
-                  >
-                    {customerData?.customers.map((customer, index) => (
-                      <option key={index} value={customer.name}>
-                        {customer.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex flex-col">
-                  <label htmlFor={`timeEntries.${index}.project`} className="text-sm font-semibold mb-1">
-                    Project
-                  </label>
-                  <select
-                    className="p-4 mb-4 bg-gray-100"
-                    {...register(`timeEntries.${index}.project`)}
-                  >
-                    {projectStates[index]?.map((project, index) => (
-                      <option key={index} value={project}>
-                        {project}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <AddTimeSheet entry={entry} index={index} />
 
                 <div className="flex flex-col">
                     <label htmlFor={`timeEntries[${index}].hours`} className="text-sm font-semibold mb-1">
