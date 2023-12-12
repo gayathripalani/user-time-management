@@ -27,6 +27,7 @@ const Header: FC = () => {
         if (location.pathname === '/') {
           navigate('/home');
         }
+        navigate(location.pathname);
       } else {
         dispatch(removeUser());
         navigate('/');
