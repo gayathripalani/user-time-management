@@ -9,6 +9,5 @@ export const getTotalHoursFilled = (timeEntries: TimeEntry[]) => {
     const hours = parseFloat(entry.hours) || 0;
     return sum + hours;
   }, 0);
-  console.log(totalHours);
   return totalHours;
 };

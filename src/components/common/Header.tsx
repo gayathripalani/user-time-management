@@ -36,7 +36,7 @@ const Header: FC = () => {
   }, [dispatch, navigate]);
 
   return (
-    <div className="fixed w-screen p-3 bg-black z-10 flex flex-col md:flex-row justify-between">
+    <div className="fixed w-screen p-3 bg-black z-10 flex md:flex-row justify-between">
       <p className='text-white font-bold text-2xl'>Timeføring AS</p>
       {user && (
         <div className="flex p-2">
